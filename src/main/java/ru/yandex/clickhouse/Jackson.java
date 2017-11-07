@@ -4,21 +4,22 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Jackson {
+    private static class Holder {
+        private static final ObjectMapper OBJECT_MAPPER;
 
-    private static final ThreadLocal<ObjectMapper> om = new ThreadLocal<ObjectMapper>() {
-        @Override
-        protected ObjectMapper initialValue() {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            return objectMapper;
+        static {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            OBJECT_MAPPER = mapper;
         }
-    };
+    }
 
     /**
-     * Flyweight thread local objectMapper.  Users of this should not keep a reference to this.
+     * Singleton objectMapper.  Users of this should not keep a reference to this.
+     *
      * @return an ObjectMapper
      */
     public static ObjectMapper getObjectMapper() {
-        return om.get();
+        return Holder.OBJECT_MAPPER;
     }
 }
